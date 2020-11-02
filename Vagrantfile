@@ -44,8 +44,6 @@ Vagrant.configure("2") do |config|
       export LANG=C
       tar zxf /tmp/mongodb_ACIT4640.tgz ~/mongodb_ACIT4640
       mongorestore -d ACIT4640 ~/mongodb_ACIT4640
-      # create mongodb instance
-      mongo --eval "db.createCollection('acit4640')"
     SHELL
   end
 
