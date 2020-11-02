@@ -17,10 +17,9 @@ Vagrant.configure("2") do |config|
     todoweb.vm.hostname = "todo.nginx"
     todoweb.vm.network "private_network", ip: "192.168.150.30"
     todoweb.vm.network "forwarded_port", guest: 80, host: 8888
-    todoweb.vm.provision "file", source: "files/nginx.conf", destination: "/tmp/nginx.conf"
-    config.vm.provision "shell", inline: <<-SHELL
+    todoweb.vm.provision "file", source: "files/nginx.conf", destination: "/etc/nginx.conf"
+    todoweb.vm.provision "shell", inline: <<-SHELL
       dnf install -y nginx
-      mv /tmp/nginx.conf /etc/nginx/nginx.conf
       systemctl enable nginx
       systemctl start nginx
     SHELL
@@ -33,16 +32,16 @@ Vagrant.configure("2") do |config|
     end
     tododb.vm.hostname = "todo.db"
     tododb.vm.network "private_network", ip: "192.168.150.20"
-    tododb.vm.provision "file", source: "files/mongodb_ACIT4640.tgz", destination: "/tmp/mongodb_ACIT4640.tgz"
-    tododb.vm.provision "file", source: "files/mongo.repo", destination: "/tmp/mongo.repo"
-    config.vm.provision "shell", inline: <<-SHELL
-      mv /tmp/mongo.repo /etc/yum.repos.d/mongodb-org-4.4.repo
-      dnf install -y mongodb-org
+    tododb.vm.provision "file", source: "files/mongodb_ACIT4640.tgz", destination: "/home/admin/mongodb_ACIT4640.tgz"
+    tododb.vm.provision "file", source: "files/mongo.repo", destination: "/etc/yum.repos.d/mongodb-org-4.4.repo"
+    tododb.vm.provision "shell", inline: <<-SHELL
+      yum install tar
+      yum install -y mongodb-org
       systemctl enable mongod
       systemctl start mongod
       mongo --eval "db.createCollection('ACIT4640')"
       export LANG=C
-      tar zxf /tmp/mongodb_ACIT4640.tgz ~/mongodb_ACIT4640
+      tar zxf /home/admin/mongodb_ACIT4640.tgz ~/mongodb_ACIT4640
       mongorestore -d ACIT4640 ~/mongodb_ACIT4640
     SHELL
   end
@@ -54,10 +53,10 @@ Vagrant.configure("2") do |config|
     end
     todoapp.vm.hostname = "todo.app"
     todoapp.vm.network "private_network", ip: "192.168.150.10"
-    todoapp.vm.provision "file", source: "files/todoapp.service", destination: "/tmp/todoapp.service"
-    todoapp.vm.provision "file", source: "files/install.sh", destination: "/tmp/install.sh"
-    config.vm.provision "shell", inline: <<-SHELL
-      bash /tmp/install.sh
+    todoapp.vm.provision "file", source: "files/todoapp.service", destination: "/etc/systemd/system/todoapp.service"
+    todoapp.vm.provision "file", source: "files/install.sh", destination: "/home/admin/install.sh"
+    todoapp.vm.provision "shell", inline: <<-SHELL
+      bash /home/admin/install.sh
       # Reload and start todoapp Deamon
       systemctl daemon-reload
       systemctl enable todoapp
