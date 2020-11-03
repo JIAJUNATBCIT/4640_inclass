@@ -67,7 +67,7 @@ Vagrant.configure("2") do |config|
       # Reload and start todoapp Deamon
       systemctl daemon-reload
       systemctl enable todoapp
-        start todoapp
+      systemctl start todoapp
     SHELL
   end
 end
