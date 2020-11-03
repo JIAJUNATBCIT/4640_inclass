@@ -38,14 +38,14 @@ Vagrant.configure("2") do |config|
     tododb.vm.provision "shell", inline: <<-SHELL
       mv /tmp/mongodb_ACIT4640.tgz /home/admin/
       mv /tmp/mongodb-org-4.4.repo /etc/yum.repos.d/
-      yum install tar
+      yum install -y tar
       yum install -y mongodb-org
       systemctl enable mongod
       systemctl start mongod
       mongo --eval "db.createCollection('ACIT4640')"
       export LANG=C
-      tar zxf /home/admin/mongodb_ACIT4640.tgz ~/mongodb_ACIT4640
-      mongorestore -d ACIT4640 ~/mongodb_ACIT4640
+      tar zxf /home/admin/mongodb_ACIT4640.tgz /home/admin/mongodb_ACIT4640
+      mongorestore -d ACIT4640 /home/admin/mongodb_ACIT4640
     SHELL
   end
 
