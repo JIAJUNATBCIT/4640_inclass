@@ -36,7 +36,6 @@ Vagrant.configure("2") do |config|
     tododb.vm.provision "file", source: "files/mongodb_ACIT4640.tgz", destination: "/tmp/mongodb_ACIT4640.tgz"
     tododb.vm.provision "file", source: "files/mongo.repo", destination: "/tmp/mongodb-org-4.4.repo"
     tododb.vm.provision "shell", inline: <<-SHELL
-      mv /tmp/mongodb_ACIT4640.tgz /home/admin/
       mv /tmp/mongodb-org-4.4.repo /etc/yum.repos.d/
       yum install -y tar
       yum install -y mongodb-org
@@ -44,7 +43,9 @@ Vagrant.configure("2") do |config|
       systemctl start mongod
       mongo --eval "db.createCollection('ACIT4640')"
       export LANG=C
-      tar zxf /home/admin/mongodb_ACIT4640.tgz /home/admin/mongodb_ACIT4640
+      mkdir /home/admin/mongodb_ACIT4640
+      mv /tmp/mongodb_ACIT4640.tgz /home/admin/mongodb_ACIT4640
+      tar zxf /home/admin/mongodb_ACIT4640/mongodb_ACIT4640.tgz
       mongorestore -d ACIT4640 /home/admin/mongodb_ACIT4640
     SHELL
   end
@@ -61,6 +62,7 @@ Vagrant.configure("2") do |config|
     todoapp.vm.provision "shell", inline: <<-SHELL
       mv /tmp/install.sh /home/admin/
       mv /tmp/todoapp.service /etc/systemd/system/
+      dnf install -y git
       bash /home/admin/install.sh
       # Reload and start todoapp Deamon
       systemctl daemon-reload
