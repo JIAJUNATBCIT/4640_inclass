@@ -62,6 +62,9 @@ Vagrant.configure("2") do |config|
     todoapp.vm.provision "shell", inline: <<-SHELL
       mv /tmp/install.sh /home/admin/
       mv /tmp/todoapp.service /etc/systemd/system/
+      curl https://raw.githubusercontent.com/dvershinin/apt-get-centos/master/apt-get.sh -o /usr/local/bin/apt-get
+      chmod 0755 /usr/local/bin/apt-get
+      curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
       dnf install -y git nodejs
       bash /home/admin/install.sh
       # Reload and start todoapp Deamon
