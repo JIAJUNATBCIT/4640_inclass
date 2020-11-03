@@ -17,8 +17,9 @@ Vagrant.configure("2") do |config|
     todoweb.vm.hostname = "todo.nginx"
     todoweb.vm.network "private_network", ip: "192.168.150.30"
     todoweb.vm.network "forwarded_port", guest: 80, host: 8888
-    todoweb.vm.provision "file", source: "files/nginx.conf", destination: "/etc/nginx.conf"
+    todoweb.vm.provision "file", source: "files/nginx.conf", destination: "/tmp/nginx.conf"
     todoweb.vm.provision "shell", inline: <<-SHELL
+      mv /tmp/nginx.conf /etc/nginx/
       dnf install -y nginx
       systemctl enable nginx
       systemctl start nginx
@@ -32,9 +33,11 @@ Vagrant.configure("2") do |config|
     end
     tododb.vm.hostname = "todo.db"
     tododb.vm.network "private_network", ip: "192.168.150.20"
-    tododb.vm.provision "file", source: "files/mongodb_ACIT4640.tgz", destination: "/home/admin/mongodb_ACIT4640.tgz"
-    tododb.vm.provision "file", source: "files/mongo.repo", destination: "/etc/yum.repos.d/mongodb-org-4.4.repo"
+    tododb.vm.provision "file", source: "files/mongodb_ACIT4640.tgz", destination: "/tmp/mongodb_ACIT4640.tgz"
+    tododb.vm.provision "file", source: "files/mongo.repo", destination: "/tmp/mongodb-org-4.4.repo"
     tododb.vm.provision "shell", inline: <<-SHELL
+      mv /tmp/mongodb_ACIT4640.tgz /home/admin/
+      mv /tmp/mongodb-org-4.4.repo /etc/yum.repos.d/
       yum install tar
       yum install -y mongodb-org
       systemctl enable mongod
@@ -53,9 +56,11 @@ Vagrant.configure("2") do |config|
     end
     todoapp.vm.hostname = "todo.app"
     todoapp.vm.network "private_network", ip: "192.168.150.10"
-    todoapp.vm.provision "file", source: "files/todoapp.service", destination: "/etc/systemd/system/todoapp.service"
-    todoapp.vm.provision "file", source: "files/install.sh", destination: "/home/admin/install.sh"
+    todoapp.vm.provision "file", source: "files/todoapp.service", destination: "/tmp/todoapp.service"
+    todoapp.vm.provision "file", source: "files/install.sh", destination: "/tmp/install.sh"
     todoapp.vm.provision "shell", inline: <<-SHELL
+      mv /tmp/install.sh /home/admin/
+      mv /tmp/todoapp.service /etc/systemd/system/
       bash /home/admin/install.sh
       # Reload and start todoapp Deamon
       systemctl daemon-reload
