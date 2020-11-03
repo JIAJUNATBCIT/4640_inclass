@@ -62,7 +62,7 @@ Vagrant.configure("2") do |config|
     todoapp.vm.provision "shell", inline: <<-SHELL
       mv /tmp/install.sh /home/admin/
       mv /tmp/todoapp.service /etc/systemd/system/
-      dnf install -y git
+      dnf install -y git nodejs
       bash /home/admin/install.sh
       # Reload and start todoapp Deamon
       systemctl daemon-reload
